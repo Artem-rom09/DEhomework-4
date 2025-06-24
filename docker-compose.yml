@@ -1,0 +1,23 @@
+version: '3.8'
+services:
+  cassandra:
+    image: cassandra:latest
+    container_name: cassandra
+    ports:
+      # Порт CQL для клієнтських підключень
+      - "9042:9042"
+    volumes:
+      - cassandra-data:/var/lib/cassandra
+    environment:
+      - CASSANDRA_CLUSTER_NAME=MyCluster
+      - CASSANDRA_DC=datacenter1
+      - CASSANDRA_RACK=rack1
+      - CASSANDRA_ENDPOINT_SNITCH=GossipingPropertyFileSnitch
+    healthcheck:
+      test: ["CMD-SHELL", "[ $$(nodetool status | grep UN) = 1 ]"]
+      interval: 15s
+      timeout: 10s
+      retries: 10
+
+volumes:
+  cassandra-data:
